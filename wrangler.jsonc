@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "flow-p12",
+  "account_id": "0976ee0adac0062c726747d29549308e",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -21,7 +22,7 @@
     {
       "binding": "DB",
       "database_name": "flow-p12-db",
-      "database_id": "ebe2e0d8-bb4e-4b36-951a-a7230dc2371e"
+      "database_id": "40c9fcd9-ca78-47dc-88cd-d058c90cdc01"
     }
   ],
   "r2_buckets": [
