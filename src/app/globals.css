@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "react-grid-layout/css/styles.css";
-@import "react-resizable/css/styles.css";
 
 @theme {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
@@ -38,14 +36,4 @@
   .edge-image  { --edge-color: #9ca3af; }
   .edge-brand  { --edge-color: #a855f7; }
   .edge-layout { --edge-color: #3b82f6; }
-}
-
-/* Dashboard react-grid-layout: sem linhas de grelha fortes; placeholder discreto */
-.dashboard-rgl .react-grid-item {
-  transition: none;
-}
-.dashboard-rgl .react-grid-placeholder {
-  border-radius: 0.75rem;
-  background: rgba(13, 148, 136, 0.12);
-  opacity: 1;
 }
