@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 -- Organizations (synced from Clerk)
 CREATE TABLE IF NOT EXISTS organizations (
   id TEXT PRIMARY KEY,
@@ -9,7 +11,7 @@ CREATE TABLE IF NOT EXISTS organizations (
 -- Users (synced from Clerk)
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   org_id TEXT REFERENCES organizations(id) ON DELETE SET NULL,
   role TEXT NOT NULL DEFAULT 'member',
   created_at INTEGER DEFAULT (unixepoch()),
@@ -41,6 +43,7 @@ CREATE TABLE IF NOT EXISTS client_shares (
   created_at INTEGER DEFAULT (unixepoch()),
   PRIMARY KEY (client_id, shared_with_org_id)
 );
+CREATE INDEX IF NOT EXISTS idx_client_shares_org ON client_shares(shared_with_org_id);
 
 -- Workflows (React Flow canvas state — graph_json stores nodes + edges)
 CREATE TABLE IF NOT EXISTS workflows (
@@ -61,6 +64,7 @@ CREATE TABLE IF NOT EXISTS images (
   id TEXT PRIMARY KEY,
   org_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   workflow_id TEXT REFERENCES workflows(id) ON DELETE SET NULL,
+  node_id TEXT,              -- canvas node ID that generated this image
   r2_key TEXT NOT NULL,
   pipeline TEXT,           -- 'standard' | 'controlnet-canny' | 'controlnet-depth' | etc.
   text_payload_json TEXT,  -- TextPayload as JSON (for gallery search)
@@ -84,7 +88,7 @@ CREATE TABLE IF NOT EXISTS structure_cache (
   last_used_at INTEGER DEFAULT (unixepoch()),
   UNIQUE(image_hash, control_type)
 );
-CREATE INDEX IF NOT EXISTS idx_structure_hash ON structure_cache(image_hash);
+CREATE INDEX IF NOT EXISTS idx_structure_hash ON structure_cache(image_hash, control_type);
 
 -- Audit log (compliance + debugging)
 CREATE TABLE IF NOT EXISTS audit_log (
@@ -99,3 +103,4 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 CREATE INDEX IF NOT EXISTS idx_audit_org ON audit_log(org_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created_at ON audit_log(created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id);
