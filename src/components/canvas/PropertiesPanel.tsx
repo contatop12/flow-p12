@@ -1,10 +1,19 @@
 // src/components/canvas/PropertiesPanel.tsx
 "use client";
+import { useCallback, useRef, useState } from "react";
 import type { Node } from "@xyflow/react";
 import type { TextNodeData } from "./nodes/TextNode";
 import type { BrandIDNodeData } from "./nodes/BrandIDNode";
-import type { ImageLayoutNodeData } from "./nodes/ImageLayoutNode";
+import {
+  IMAGE_LAYOUT_MAX_FILE_BYTES,
+  validateImageLayoutFile,
+  type ImageLayoutNodeData,
+} from "./nodes/ImageLayoutNode";
 import type { GenerateNodeData } from "./nodes/GenerateNode";
+import type { OutputNodeData } from "./nodes/OutputNode";
+
+const inputBase =
+  "w-full rounded-lg border border-white/10 bg-surface-2 px-3 py-2 text-xs text-ink outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-all";
 
 type PanelProps = {
   node: Node | null;
@@ -14,8 +23,8 @@ type PanelProps = {
 export function PropertiesPanel({ node, onChange }: PanelProps) {
   if (!node) {
     return (
-      <aside className="w-[280px] shrink-0 border-l bg-white flex items-center justify-center">
-        <p className="text-xs text-[#A1A1AA] text-center px-4">
+      <aside className="w-[280px] shrink-0 border-l border-white/10 bg-surface flex items-center justify-center">
+        <p className="text-xs text-subtle text-center px-4">
           Selecione um nó para editar suas propriedades
         </p>
       </aside>
@@ -27,10 +36,12 @@ export function PropertiesPanel({ node, onChange }: PanelProps) {
   }
 
   return (
-    <aside className="w-[280px] shrink-0 border-l bg-white overflow-y-auto">
-      <div className="px-4 py-3 border-b">
-        <p className="text-xs font-semibold text-[#18181B]">{node.type?.replace("Node", "") ?? "Nó"}</p>
-        <p className="text-[10px] text-[#A1A1AA] font-mono mt-0.5">{node.id}</p>
+    <aside className="w-[280px] shrink-0 border-l border-white/10 bg-surface overflow-y-auto">
+      <div className="px-4 py-3 border-b border-white/10">
+        <p className="text-xs font-semibold text-ink">
+          {node.type?.replace("Node", "") ?? "Nó"}
+        </p>
+        <p className="text-[10px] text-subtle font-mono mt-0.5 break-all">{node.id}</p>
       </div>
 
       <div className="px-4 py-4 space-y-4">
@@ -47,7 +58,7 @@ export function PropertiesPanel({ node, onChange }: PanelProps) {
           <GeneratePanel data={node.data as GenerateNodeData} update={update} />
         )}
         {node.type === "OutputNode" && (
-          <p className="text-xs text-[#71717A]">Nó de saída — sem configurações.</p>
+          <OutputPanel data={node.data as OutputNodeData} update={update} />
         )}
       </div>
     </aside>
@@ -57,7 +68,7 @@ export function PropertiesPanel({ node, onChange }: PanelProps) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-[10px] font-semibold text-[#52525B] uppercase tracking-wider mb-1">
+      <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">
         {label}
       </label>
       {children}
@@ -73,29 +84,45 @@ function TextPanel({ data, update }: { data: TextNodeData; update: (p: Record<st
           value={data.mainPrompt}
           onChange={(e) => update({ mainPrompt: e.target.value })}
           rows={4}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all resize-none"
+          className={`${inputBase} resize-none`}
           placeholder="Descreva a imagem…"
         />
       </Field>
       <Field label="Headline">
-        <input type="text" value={data.headline ?? ""} onChange={(e) => update({ headline: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all"
-          placeholder="Promoção Insana" />
+        <input
+          type="text"
+          value={data.headline ?? ""}
+          onChange={(e) => update({ headline: e.target.value })}
+          className={inputBase}
+          placeholder="Promoção Insana"
+        />
       </Field>
       <Field label="Subhead">
-        <input type="text" value={data.subhead ?? ""} onChange={(e) => update({ subhead: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all"
-          placeholder="Toda pizza pela metade…" />
+        <input
+          type="text"
+          value={data.subhead ?? ""}
+          onChange={(e) => update({ subhead: e.target.value })}
+          className={inputBase}
+          placeholder="Toda pizza pela metade…"
+        />
       </Field>
       <Field label="CTA">
-        <input type="text" value={data.cta ?? ""} onChange={(e) => update({ cta: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all"
-          placeholder="Peça já" />
+        <input
+          type="text"
+          value={data.cta ?? ""}
+          onChange={(e) => update({ cta: e.target.value })}
+          className={inputBase}
+          placeholder="Peça já"
+        />
       </Field>
       <Field label="Disclaimer">
-        <input type="text" value={data.disclaimer ?? ""} onChange={(e) => update({ disclaimer: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all"
-          placeholder="Válido até 15/05" />
+        <input
+          type="text"
+          value={data.disclaimer ?? ""}
+          onChange={(e) => update({ disclaimer: e.target.value })}
+          className={inputBase}
+          placeholder="Válido até 15/05"
+        />
       </Field>
     </>
   );
@@ -106,10 +133,9 @@ function BrandPanel({ data }: { data: BrandIDNodeData; update: (p: Record<string
   return (
     <>
       <Field label="Cliente">
-        <p className="text-xs text-[#71717A]">
-          {bp?.clientName ?? "Nenhum cliente selecionado"}
-          {" "}
-          <span className="text-[10px] text-[#A1A1AA]">(selecione no dropdown do nó)</span>
+        <p className="text-xs text-muted">
+          {bp?.clientName ?? "Nenhum cliente selecionado"}{" "}
+          <span className="text-[10px] text-subtle">(selecione no dropdown do nó)</span>
         </p>
       </Field>
       {bp && (
@@ -128,9 +154,9 @@ function BrandPanel({ data }: { data: BrandIDNodeData; update: (p: Record<string
                     type="checkbox"
                     checked={bp.toggles[key]}
                     readOnly
-                    className="rounded border-[#E5E2DB]"
+                    className="rounded border-white/20 bg-surface-2"
                   />
-                  <span className="text-xs text-[#52525B]">{labels[key]}</span>
+                  <span className="text-xs text-muted">{labels[key]}</span>
                 </label>
               );
             })}
@@ -142,8 +168,100 @@ function BrandPanel({ data }: { data: BrandIDNodeData; update: (p: Record<string
 }
 
 function LayoutPanel({ data, update }: { data: ImageLayoutNodeData; update: (p: Record<string, unknown>) => void }) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [imgError, setImgError] = useState<string | null>(null);
+  const [imgLoading, setImgLoading] = useState(false);
+
+  const onLayoutImageSelected = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      setImgError(null);
+      const validation = validateImageLayoutFile(file);
+      if (validation) {
+        setImgError(validation);
+        return;
+      }
+      setImgLoading(true);
+      try {
+        const url = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === "string") resolve(reader.result);
+            else reject(new Error("Leitura inválida."));
+          };
+          reader.onerror = () =>
+            reject(new Error(reader.error?.message ?? "Falha ao ler o arquivo."));
+          reader.readAsDataURL(file);
+        });
+        update({ imageUrl: url });
+      } catch (err) {
+        setImgError(err instanceof Error ? err.message : "Não foi possível carregar a imagem.");
+      } finally {
+        setImgLoading(false);
+      }
+    },
+    [update]
+  );
+
+  const maxMb = IMAGE_LAYOUT_MAX_FILE_BYTES / (1024 * 1024);
+
   return (
     <>
+      <Field label="Imagem de referência">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+          className="hidden"
+          onChange={onLayoutImageSelected}
+        />
+        {data.imageUrl ? (
+          <div className="space-y-2">
+            <img
+              src={data.imageUrl}
+              alt="Referência"
+              className="w-full max-h-32 object-contain rounded-lg border border-white/10 bg-bg"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={imgLoading}
+                className="text-xs rounded-lg border border-white/15 px-3 py-1.5 text-ink hover:bg-surface-2 disabled:opacity-50"
+              >
+                {imgLoading ? "Carregando…" : "Substituir"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setImgError(null);
+                  update({ imageUrl: undefined });
+                }}
+                className="text-xs rounded-lg border border-red-500/40 px-3 py-1.5 text-red-400 hover:bg-red-950/40"
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={imgLoading}
+            className="w-full text-xs rounded-lg border border-dashed border-white/15 px-3 py-3 text-muted hover:bg-surface-2 disabled:opacity-50"
+          >
+            {imgLoading ? "Carregando…" : "Escolher arquivo (JPEG, PNG, WebP, GIF)"}
+          </button>
+        )}
+        <p className="text-[10px] text-subtle mt-1">Tamanho máximo aproximado: {maxMb} MB.</p>
+        {imgError && (
+          <p className="text-[10px] text-red-400 mt-1" role="alert">
+            {imgError}
+          </p>
+        )}
+      </Field>
       <Field label={`Fidelidade: ${data.fidelity}%`}>
         <input
           type="range"
@@ -152,9 +270,9 @@ function LayoutPanel({ data, update }: { data: ImageLayoutNodeData; update: (p: 
           step={10}
           value={data.fidelity}
           onChange={(e) => update({ fidelity: Number(e.target.value) })}
-          className="w-full accent-[#18181B]"
+          className="w-full accent-accent"
         />
-        <p className="text-[10px] text-[#71717A] mt-1">
+        <p className="text-[10px] text-muted mt-1">
           {data.fidelity <= 20 && "Influência mínima — inspiração distante."}
           {data.fidelity > 20 && data.fidelity <= 50 && "Influência moderada — pipeline inspiração."}
           {data.fidelity > 50 && data.fidelity <= 80 && "Influência significativa — ControlNet ativo."}
@@ -165,7 +283,7 @@ function LayoutPanel({ data, update }: { data: ImageLayoutNodeData; update: (p: 
         <select
           value={data.techMode}
           onChange={(e) => update({ techMode: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none bg-white"
+          className={`${inputBase} bg-surface`}
         >
           <option value="auto">Automático (recomendado)</option>
           <option value="force_inspiration">Forçar inspiração</option>
@@ -176,7 +294,7 @@ function LayoutPanel({ data, update }: { data: ImageLayoutNodeData; update: (p: 
         <select
           value={data.controlType}
           onChange={(e) => update({ controlType: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none bg-white"
+          className={`${inputBase} bg-surface`}
         >
           <option value="depth">Profundidade (Depth)</option>
           <option value="canny">Bordas (Canny)</option>
@@ -188,14 +306,19 @@ function LayoutPanel({ data, update }: { data: ImageLayoutNodeData; update: (p: 
   );
 }
 
-function GeneratePanel({ data, update }: { data: GenerateNodeData; update: (p: Record<string, unknown>) => void }) {
+function OutputPanel({ data, update }: { data: OutputNodeData; update: (p: Record<string, unknown>) => void }) {
+  const provider = data.preferredProvider ?? "gpt-image-2";
+  const aspect = data.aspectRatio ?? "1:1";
   return (
     <>
+      <p className="text-xs text-muted leading-relaxed">
+        O resultado aparece no cartão após gerar. Ligue Text (obrigatório), Brand ID e Image-Layout ao Output.
+      </p>
       <Field label="Provider">
         <select
-          value={data.preferredProvider}
+          value={provider}
           onChange={(e) => update({ preferredProvider: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none bg-white"
+          className={`${inputBase} bg-surface`}
         >
           <option value="gpt-image-2">GPT-Image 2</option>
           <option value="nano-banana-2">Nano Banana 2</option>
@@ -204,9 +327,42 @@ function GeneratePanel({ data, update }: { data: GenerateNodeData; update: (p: R
       </Field>
       <Field label="Aspect ratio">
         <select
-          value={data.aspectRatio}
+          value={aspect}
           onChange={(e) => update({ aspectRatio: e.target.value })}
-          className="w-full rounded-lg border px-3 py-2 text-xs text-[#18181B] outline-none bg-white"
+          className={`${inputBase} bg-surface`}
+        >
+          <option value="1:1">1:1 (Quadrado)</option>
+          <option value="16:9">16:9 (Paisagem)</option>
+          <option value="9:16">9:16 (Retrato)</option>
+          <option value="4:3">4:3</option>
+        </select>
+      </Field>
+    </>
+  );
+}
+
+function GeneratePanel({ data, update }: { data: GenerateNodeData; update: (p: Record<string, unknown>) => void }) {
+  return (
+    <>
+      <p className="text-[10px] text-amber-400/90">
+        Nó legado. Prefira o Output com ligações diretas dos nós de dados.
+      </p>
+      <Field label="Provider">
+        <select
+          value={data.preferredProvider ?? "gpt-image-2"}
+          onChange={(e) => update({ preferredProvider: e.target.value })}
+          className={`${inputBase} bg-surface`}
+        >
+          <option value="gpt-image-2">GPT-Image 2</option>
+          <option value="nano-banana-2">Nano Banana 2</option>
+          <option value="luma">Luma UNI-1.1</option>
+        </select>
+      </Field>
+      <Field label="Aspect ratio">
+        <select
+          value={data.aspectRatio ?? "1:1"}
+          onChange={(e) => update({ aspectRatio: e.target.value })}
+          className={`${inputBase} bg-surface`}
         >
           <option value="1:1">1:1 (Quadrado)</option>
           <option value="16:9">16:9 (Paisagem)</option>

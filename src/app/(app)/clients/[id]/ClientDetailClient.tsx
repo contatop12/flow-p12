@@ -110,26 +110,27 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  if (loading) return <div className="p-8 text-sm text-[#A1A1AA]">Carregando...</div>;
-  if (!client) return <div className="p-8 text-sm text-red-500">Cliente não encontrado.</div>;
+  if (loading) return <div className="p-8 text-sm text-subtle">Carregando...</div>;
+  if (!client) return <div className="p-8 text-sm text-red-400">Cliente não encontrado.</div>;
 
   return (
     <div className="p-8 max-w-2xl">
       <div className="mb-6 flex items-center gap-3">
         <button
+          type="button"
           onClick={() => router.push("/clients")}
-          className="text-sm text-[#71717A] hover:text-[#18181B] transition-colors"
+          className="text-sm text-muted hover:text-ink transition-colors"
         >
           ← Clientes
         </button>
-        <span className="text-[#E5E2DB]">/</span>
-        <h1 className="text-xl font-semibold text-[#18181B] tracking-tight">{client.name}</h1>
+        <span className="text-white/15">/</span>
+        <h1 className="text-xl font-semibold text-ink tracking-tight">{client.name}</h1>
       </div>
 
-      <div className="mb-6 bg-white rounded-xl border border-[#E5E2DB] p-4">
-        <p className="text-sm font-medium text-[#18181B] mb-3">Logo</p>
+      <div className="mb-6 bg-surface rounded-xl border border-white/10 p-4">
+        <p className="text-sm font-medium text-ink mb-3">Logo</p>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl border border-[#E5E2DB] bg-[#F5F4F1] overflow-hidden flex items-center justify-center">
+          <div className="w-16 h-16 rounded-xl border border-white/10 bg-surface-2 overflow-hidden flex items-center justify-center">
             {client.logoR2Key ? (
               <img
                 src={`/api/clients/${clientId}/logo/serve?t=${client.logoR2Key}`}
@@ -137,18 +138,19 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
                 className="w-full h-full object-contain"
               />
             ) : (
-              <span className="text-2xl font-bold text-[#A1A1AA]">{client.name[0]?.toUpperCase()}</span>
+              <span className="text-2xl font-bold text-subtle">{client.name[0]?.toUpperCase()}</span>
             )}
           </div>
           <div>
             <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingLogo}
-              className="px-3 py-1.5 text-xs font-medium border border-[#E5E2DB] rounded-lg hover:bg-[#F5F4F1] disabled:opacity-50 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium border border-white/15 rounded-lg hover:bg-surface-2 disabled:opacity-50 transition-colors text-ink"
             >
               {uploadingLogo ? "Enviando…" : "Trocar logo"}
             </button>
-            <p className="mt-1 text-[11px] text-[#A1A1AA]">PNG, JPG, WebP ou SVG. Máx 5 MB.</p>
+            <p className="mt-1 text-[11px] text-subtle">PNG, JPG, WebP ou SVG. Máx 5 MB.</p>
           </div>
           <input
             ref={fileInputRef}
@@ -160,63 +162,63 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="bg-white rounded-xl border border-[#E5E2DB] p-4 space-y-4">
+      <form onSubmit={handleSave} className="bg-surface rounded-xl border border-white/10 p-4 space-y-4">
         <div>
-          <label className="block text-xs font-medium text-[#71717A] mb-1">Nome *</label>
+          <label className="block text-xs font-medium text-muted mb-1">Nome *</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full px-3 py-2 text-sm rounded-lg border border-[#E5E2DB] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-[#18181B]"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-white/10 bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#71717A] mb-1">Tom de marca</label>
+          <label className="block text-xs font-medium text-muted mb-1">Tom de marca</label>
           <textarea
             value={brandTone}
             onChange={(e) => setBrandTone(e.target.value)}
             rows={3}
             placeholder="Ex: Bold and modern, com personalidade vibrante..."
-            className="w-full px-3 py-2 text-sm rounded-lg border border-[#E5E2DB] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-[#18181B] resize-none"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-white/10 bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink resize-none"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-[#71717A] mb-1">Fonte primária</label>
+            <label className="block text-xs font-medium text-muted mb-1">Fonte primária</label>
             <input
               type="text"
               value={primaryFont}
               onChange={(e) => setPrimaryFont(e.target.value)}
               placeholder="Ex: Helvetica Neue"
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[#E5E2DB] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-[#18181B]"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-white/10 bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#71717A] mb-1">Fonte secundária</label>
+            <label className="block text-xs font-medium text-muted mb-1">Fonte secundária</label>
             <input
               type="text"
               value={secondaryFont}
               onChange={(e) => setSecondaryFont(e.target.value)}
               placeholder="Ex: Georgia"
-              className="w-full px-3 py-2 text-sm rounded-lg border border-[#E5E2DB] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-[#18181B]"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-white/10 bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#71717A] mb-1">
+          <label className="block text-xs font-medium text-muted mb-1">
             Paleta de cores
-            <span className="font-normal ml-1 text-[#A1A1AA]">(hex separados por vírgula)</span>
+            <span className="font-normal ml-1 text-subtle">(hex separados por vírgula)</span>
           </label>
           <input
             type="text"
             value={paletteInput}
             onChange={(e) => setPaletteInput(e.target.value)}
             placeholder="#FF0000, #00FF00, #0000FF"
-            className="w-full px-3 py-2 text-sm rounded-lg border border-[#E5E2DB] bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-[#18181B] font-mono"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-white/10 bg-surface-2 focus:outline-none focus:ring-1 focus:ring-accent/40 text-ink font-mono"
           />
           {paletteInput && (
             <div className="mt-2 flex gap-2 flex-wrap">
@@ -227,7 +229,7 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
                 .map((color) => (
                   <div
                     key={color}
-                    className="w-6 h-6 rounded border border-[#E5E2DB]"
+                    className="w-6 h-6 rounded border border-white/15"
                     style={{ background: color }}
                     title={color}
                   />
@@ -236,22 +238,22 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
           )}
         </div>
 
-        {error && <p className="text-xs text-red-500">{error}</p>}
-        {saveMsg && <p className="text-xs text-[#0D9488]">{saveMsg}</p>}
+        {error && <p className="text-xs text-red-400">{error}</p>}
+        {saveMsg && <p className="text-xs text-accent">{saveMsg}</p>}
 
         <div className="flex items-center justify-between pt-2">
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors"
+            className="px-3 py-1.5 text-xs text-red-400 border border-red-500/40 rounded-lg hover:bg-red-950/40 disabled:opacity-50 transition-colors"
           >
             {deleting ? "Excluindo…" : "Excluir cliente"}
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium bg-[#18181B] text-white rounded-lg hover:bg-[#27272A] disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-zinc-100 text-zinc-900 rounded-lg hover:bg-white disabled:opacity-50 transition-colors"
           >
             {saving ? "Salvando…" : "Salvar"}
           </button>

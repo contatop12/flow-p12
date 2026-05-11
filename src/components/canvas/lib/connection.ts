@@ -11,6 +11,7 @@ export function getHandleType(handleId: string | null): ConnectionType | null {
 }
 
 // Target handle → which source types it accepts
+/** Handles alvo: mesmos ids em Generate (legado) e Output (sink único). */
 const TARGET_ACCEPTS: Record<string, ConnectionType[]> = {
   "text-in": ["text"],
   "brand-in": ["brand"],

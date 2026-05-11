@@ -3,21 +3,22 @@
 @theme {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 
-  /* Functional node/edge colors — preserved */
+  /* Functional node/edge colors */
   --color-brand:      #a855f7;
   --color-layout:     #3b82f6;
   --color-node-text:  #84cc16;
   --color-node-image: #9ca3af;
 
-  /* Design system */
-  --color-bg:         #F5F4F1;
-  --color-surface:    #FFFFFF;
-  --color-border:     #E5E2DB;
-  --color-ink:        #18181B;
-  --color-muted:      #71717A;
-  --color-subtle:     #A1A1AA;
-  --color-accent:     #0D9488;
-  --color-accent-dim: #CCFBF1;
+  /* Dark design system */
+  --color-bg:         #09090b;
+  --color-surface:    #141416;
+  --color-surface-2:  #1c1c1f;
+  --color-border:     rgba(255, 255, 255, 0.08);
+  --color-ink:        #fafafa;
+  --color-muted:      #a1a1aa;
+  --color-subtle:     #71717a;
+  --color-accent:     #2dd4bf;
+  --color-accent-dim: #134e4a;
 }
 
 @layer base {

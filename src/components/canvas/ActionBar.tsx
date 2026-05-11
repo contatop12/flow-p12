@@ -1,5 +1,7 @@
 "use client";
 
+import { FolderOpen, Save } from "lucide-react";
+
 type ActionBarProps = {
   onSave: () => void;
   onLoad: () => void;
@@ -8,24 +10,26 @@ type ActionBarProps = {
 
 export function ActionBar({ onSave, onLoad, isSaving }: ActionBarProps) {
   return (
-    <div className="h-11 border-t bg-white flex items-center px-4 gap-2 shrink-0">
+    <div className="h-11 border-t border-white/10 bg-surface flex items-center px-4 gap-2 shrink-0">
       <button
         type="button"
         onClick={onSave}
         disabled={isSaving}
-        className="px-3 py-1.5 rounded text-xs font-medium bg-[#18181B] text-white hover:bg-[#27272A] disabled:opacity-50 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50 transition-colors"
       >
-        {isSaving ? "Salvando…" : "💾 Salvar"}
+        <Save className="size-3.5" aria-hidden />
+        {isSaving ? "Salvando…" : "Salvar"}
       </button>
       <button
         type="button"
         onClick={onLoad}
-        className="px-3 py-1.5 rounded text-xs font-medium border border-[#E5E2DB] text-[#52525B] hover:bg-[#F5F4F1] transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-white/15 text-muted hover:text-ink hover:bg-surface-2 transition-colors"
       >
-        📂 Carregar
+        <FolderOpen className="size-3.5" aria-hidden />
+        Carregar
       </button>
       <div className="flex-1" />
-      <p className="text-[10px] text-[#A1A1AA]">Arraste nós da paleta para o canvas</p>
+      <p className="text-[10px] text-subtle">Arraste nós da paleta para o canvas</p>
     </div>
   );
 }

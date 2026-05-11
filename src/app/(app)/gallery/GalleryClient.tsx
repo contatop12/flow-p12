@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { X } from "lucide-react";
 
 interface ImageRow {
   id: string;
@@ -21,7 +22,7 @@ export function GalleryClient() {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lightbox, setLightbox] = useState<string | null>(null); // image id
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   const fetchImages = useCallback(async (cursor?: string) => {
     const url = cursor ? `/api/images?cursor=${cursor}` : "/api/images";
@@ -55,7 +56,7 @@ export function GalleryClient() {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="aspect-square bg-[#E5E2DB] rounded-xl animate-pulse" />
+          <div key={i} className="aspect-square bg-surface-2 rounded-xl animate-pulse border border-white/5" />
         ))}
       </div>
     );
@@ -63,9 +64,9 @@ export function GalleryClient() {
 
   if (images.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-dashed p-12 text-center">
-        <p className="text-sm text-[#A1A1AA]">Nenhuma imagem gerada ainda.</p>
-        <p className="mt-1 text-xs text-[#A1A1AA]">Use o canvas para gerar imagens.</p>
+      <div className="bg-surface rounded-xl border border-dashed border-white/15 p-12 text-center">
+        <p className="text-sm text-subtle">Nenhuma imagem gerada ainda.</p>
+        <p className="mt-1 text-xs text-subtle">Use o canvas no nó Output para gerar imagens.</p>
       </div>
     );
   }
@@ -80,8 +81,9 @@ export function GalleryClient() {
           return (
             <button
               key={img.id}
+              type="button"
               onClick={() => setLightbox(img.id)}
-              className="group relative aspect-square bg-[#E5E2DB] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#0D9488] transition-all"
+              className="group relative aspect-square bg-surface-2 rounded-xl overflow-hidden border border-white/10 hover:ring-2 hover:ring-accent/50 transition-all"
               title={prompt}
             >
               <img
@@ -90,9 +92,9 @@ export function GalleryClient() {
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
               {img.pipeline && img.pipeline !== "standard" && (
-                <span className="absolute bottom-2 left-2 text-[10px] bg-black/60 text-white px-1.5 py-0.5 rounded">
+                <span className="absolute bottom-2 left-2 text-[10px] bg-black/70 text-white px-1.5 py-0.5 rounded">
                   {img.pipeline.replace("controlnet-", "")}
                 </span>
               )}
@@ -104,9 +106,10 @@ export function GalleryClient() {
       {nextCursor && (
         <div className="mt-8 flex justify-center">
           <button
+            type="button"
             onClick={loadMore}
             disabled={loadingMore}
-            className="px-6 py-2.5 text-sm font-medium bg-[#18181B] text-white rounded-lg hover:bg-[#27272A] disabled:opacity-50 transition-colors"
+            className="px-6 py-2.5 text-sm font-medium bg-zinc-100 text-zinc-900 rounded-lg hover:bg-white disabled:opacity-50 transition-colors"
           >
             {loadingMore ? "Carregando..." : "Carregar mais"}
           </button>
@@ -115,20 +118,22 @@ export function GalleryClient() {
 
       {lightbox && (
         <div
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4"
           onClick={() => setLightbox(null)}
         >
           <div className="relative max-w-3xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
             <img
               src={`/api/images/${lightbox}/serve`}
               alt="Imagem gerada"
-              className="max-w-full max-h-[85vh] rounded-xl object-contain"
+              className="max-w-full max-h-[85vh] rounded-xl object-contain border border-white/10"
             />
             <button
+              type="button"
               onClick={() => setLightbox(null)}
-              className="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#18181B] hover:bg-[#F5F4F1] shadow-md"
+              className="absolute -top-3 -right-3 w-9 h-9 bg-surface border border-white/15 rounded-full flex items-center justify-center text-ink hover:bg-surface-2 shadow-md"
+              aria-label="Fechar"
             >
-              ✕
+              <X className="size-4" />
             </button>
           </div>
         </div>

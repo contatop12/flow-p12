@@ -81,12 +81,13 @@ export interface GenerationRequest {
   nodeId: string;
   nodeType: Extract<
     NodeType,
-    "Generate" | "Edit" | "StyleTransfer" | "ConsistencyPack" | "Upscale"
+    "Generate" | "Output" | "Edit" | "StyleTransfer" | "ConsistencyPack" | "Upscale"
   >;
   textPayload: TextPayload;
   brandPayload?: BrandPayload;
   layoutPayload?: LayoutPayload;
   preferredProvider?: PreferredProvider;
+  workflowId?: string;
 }
 
 export interface Client {

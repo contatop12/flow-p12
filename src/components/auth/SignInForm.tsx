@@ -41,26 +41,20 @@ export function SignInForm() {
         <div className="w-8 h-8 rounded-lg bg-[#18181B] flex items-center justify-center mb-6 lg:hidden">
           <span className="text-white text-xs font-bold tracking-widest">F</span>
         </div>
-        <h1 className="text-2xl font-semibold text-[#18181B] tracking-tight">
-          Bom dia
-        </h1>
-        <p className="mt-1 text-sm text-[#71717A]">
-          Entre na sua conta Flow P12
-        </p>
+        <h1 className="text-2xl font-semibold text-ink tracking-tight">Bom dia</h1>
+        <p className="mt-1 text-sm text-muted">Entre na sua conta Flow P12</p>
       </div>
 
       {/* Form */}
       <form onSubmit={onSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-600">
+          <div className="rounded-lg border border-red-500/40 bg-red-950/40 px-3.5 py-2.5 text-sm text-red-300">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-medium text-[#52525B] mb-1.5">
-            E-mail
-          </label>
+          <label className="block text-xs font-medium text-muted mb-1.5">E-mail</label>
           <input
             type="email"
             autoComplete="email"
@@ -68,14 +62,12 @@ export function SignInForm() {
             onChange={(ev) => setEmail(ev.target.value)}
             required
             placeholder="voce@empresa.com"
-            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-[#18181B] placeholder-[#A1A1AA] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all duration-150"
+            className="w-full rounded-lg border border-white/10 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-all duration-150"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-[#52525B] mb-1.5">
-            Senha
-          </label>
+          <label className="block text-xs font-medium text-muted mb-1.5">Senha</label>
           <input
             type="password"
             autoComplete="current-password"
@@ -83,14 +75,14 @@ export function SignInForm() {
             onChange={(ev) => setPassword(ev.target.value)}
             required
             placeholder="••••••••"
-            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all duration-150"
+            className="w-full rounded-lg border border-white/10 bg-surface-2 px-3.5 py-2.5 text-sm text-ink outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-all duration-150"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-[#18181B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#27272A] active:bg-[#3F3F46] disabled:opacity-40 transition-colors duration-150 mt-2"
+          className="w-full rounded-lg bg-zinc-100 px-4 py-2.5 text-sm font-medium text-zinc-900 hover:bg-white active:opacity-90 disabled:opacity-40 transition-colors duration-150 mt-2"
         >
           {loading ? "Entrando…" : "Entrar"}
         </button>

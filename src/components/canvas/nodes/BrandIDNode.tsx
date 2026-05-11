@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Handle, Position, useReactFlow, type NodeProps } from "@xyflow/react";
+import { BadgeCheck } from "lucide-react";
 import type { BrandPayload } from "@/types";
+import { NodeShell } from "./NodeShell";
 
 interface ClientOption {
   id: string;
@@ -74,15 +76,11 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
   const selectedClient = clients.find((c) => c.id === selectedClientId);
 
   return (
-    <div
-      className={`w-52 rounded-xl border bg-white shadow-sm transition-shadow ${
-        selected ? "shadow-md ring-2 ring-[#a855f7]" : ""
-      }`}
-    >
+    <NodeShell selected={selected} className="w-52">
       <div className="px-3 pt-3 pb-2">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-mono text-[#a855f7] bg-purple-50 px-1.5 py-0.5 rounded">brand</span>
-          <span className="text-xs font-medium text-[#18181B] truncate">
+        <div className="flex items-center gap-2 mb-2 border-b border-white/10 pb-2">
+          <BadgeCheck className="size-3.5 text-brand shrink-0 opacity-90" aria-hidden />
+          <span className="text-[11px] font-medium tracking-tight text-zinc-200 truncate">
             {nodeData.label ?? "Brand ID"}
           </span>
         </div>
@@ -91,11 +89,13 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
           value={selectedClientId}
           onChange={(e) => handleClientChange(e.target.value)}
           disabled={loadingClients}
-          className="w-full px-2 py-1.5 text-xs rounded-lg border border-[#E5E2DB] bg-white text-[#18181B] focus:outline-none focus:ring-2 focus:ring-[#a855f7] mb-2"
+          className="nodrag nopan w-full px-2 py-1.5 text-xs rounded-lg border border-white/10 bg-surface-2 text-ink focus:outline-none focus:ring-1 focus:ring-brand/40 mb-2"
         >
           <option value="">{loadingClients ? "Carregando…" : "Selecione um cliente"}</option>
           {clients.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
 
@@ -108,14 +108,14 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
                 applyTypography: "Tipografia",
               };
               return (
-                <label key={key} className="flex items-center gap-2 cursor-pointer">
+                <label key={key} className="flex items-center gap-2 cursor-pointer nodrag">
                   <input
                     type="checkbox"
                     checked={toggles[key]}
                     onChange={() => handleToggle(key)}
-                    className="rounded border-[#E5E2DB] accent-[#a855f7]"
+                    className="rounded border-white/20 bg-surface-2 accent-brand"
                   />
-                  <span className="text-[11px] text-[#71717A]">{labels[key]}</span>
+                  <span className="text-[11px] text-muted">{labels[key]}</span>
                 </label>
               );
             })}
@@ -127,8 +127,14 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
         type="source"
         position={Position.Right}
         id="brand-out"
-        style={{ background: "#a855f7", width: 10, height: 10 }}
+        style={{
+          background: "#a855f7",
+          border: "2px solid #18181b",
+          width: 10,
+          height: 10,
+          right: -6,
+        }}
       />
-    </div>
+    </NodeShell>
   );
 }

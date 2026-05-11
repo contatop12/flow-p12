@@ -1,26 +1,30 @@
 // src/components/canvas/NodePalette.tsx
 "use client";
 
-const PALETTE_CATEGORIES = [
+import type { LucideIcon } from "lucide-react";
+import {
+  BadgeCheck,
+  ImageDown,
+  LayoutTemplate,
+  Type,
+} from "lucide-react";
+import { clsx } from "clsx";
+
+const PALETTE_CATEGORIES: {
+  label: string;
+  items: { type: string; icon: LucideIcon; label: string }[];
+}[] = [
   {
     label: "Dados",
     items: [
-      { type: "TextNode",        icon: "💬", label: "Text" },
-      { type: "BrandIDNode",     icon: "🎨", label: "Brand ID" },
-      { type: "ImageLayoutNode", icon: "📐", label: "Image-Layout" },
+      { type: "TextNode", icon: Type, label: "Text" },
+      { type: "BrandIDNode", icon: BadgeCheck, label: "Brand ID" },
+      { type: "ImageLayoutNode", icon: LayoutTemplate, label: "Image-Layout" },
     ],
   },
   {
-    label: "Geração",
-    items: [
-      { type: "GenerateNode", icon: "✨", label: "Generate" },
-    ],
-  },
-  {
-    label: "Output",
-    items: [
-      { type: "OutputNode", icon: "📤", label: "Output" },
-    ],
+    label: "Saída",
+    items: [{ type: "OutputNode", icon: ImageDown, label: "Output" }],
   },
 ];
 
@@ -32,27 +36,33 @@ export function NodePalette() {
   }
 
   return (
-    <aside className="w-[200px] shrink-0 border-r bg-white overflow-y-auto flex flex-col">
-      <div className="px-3 py-2.5 border-b">
-        <p className="text-[10px] font-semibold text-[#A1A1AA] uppercase tracking-widest">Nós</p>
+    <aside className="w-[200px] shrink-0 border-r border-white/10 bg-surface overflow-y-auto flex flex-col">
+      <div className="px-3 py-2.5 border-b border-white/10">
+        <p className="text-[10px] font-semibold text-subtle uppercase tracking-widest">Nós</p>
       </div>
       <div className="flex flex-col gap-0 py-2">
         {PALETTE_CATEGORIES.map((cat) => (
           <div key={cat.label}>
-            <p className="px-3 py-1.5 text-[10px] font-semibold text-[#A1A1AA] uppercase tracking-widest">
+            <p className="px-3 py-1.5 text-[10px] font-semibold text-subtle uppercase tracking-widest">
               {cat.label}
             </p>
-            {cat.items.map((item) => (
-              <div
-                key={item.type}
-                draggable
-                onDragStart={(e) => onDragStart(e, item.type)}
-                className="mx-2 mb-0.5 flex items-center gap-2 px-2 py-1.5 rounded cursor-grab hover:bg-[#F5F4F1] active:cursor-grabbing select-none"
-              >
-                <span className="text-sm">{item.icon}</span>
-                <span className="text-xs text-[#52525B]">{item.label}</span>
-              </div>
-            ))}
+            {cat.items.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.type}
+                  draggable
+                  onDragStart={(e) => onDragStart(e, item.type)}
+                  className={clsx(
+                    "mx-2 mb-0.5 flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab",
+                    "hover:bg-surface-2 active:cursor-grabbing select-none text-muted hover:text-ink transition-colors"
+                  )}
+                >
+                  <Icon className="size-3.5 shrink-0 opacity-80" aria-hidden />
+                  <span className="text-xs">{item.label}</span>
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

@@ -36,7 +36,7 @@ export default function SignInPage() {
             </span>
             <span className="inline-flex items-center gap-1.5 text-xs text-white/40 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[#9ca3af]" />
-              Image
+              Output
             </span>
           </div>
         </div>
@@ -45,10 +45,10 @@ export default function SignInPage() {
       </div>
 
       {/* Right — form */}
-      <div className="flex flex-1 items-center justify-center p-8 bg-[#F5F4F1]">
+      <div className="flex flex-1 items-center justify-center p-8 bg-bg">
         <Suspense
           fallback={
-            <div className="text-sm text-[#71717A]" aria-live="polite">
+            <div className="text-sm text-muted" aria-live="polite">
               Carregando…
             </div>
           }

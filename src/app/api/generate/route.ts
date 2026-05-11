@@ -48,7 +48,7 @@ const layoutPayloadSchema = z
 
 const generateSchema = z.object({
   nodeId: z.string(),
-  nodeType: z.enum(["Generate", "Edit", "StyleTransfer", "ConsistencyPack", "Upscale"]),
+  nodeType: z.enum(["Generate", "Output", "Edit", "StyleTransfer", "ConsistencyPack", "Upscale"]),
   textPayload: textPayloadSchema,
   brandPayload: brandPayloadSchema,
   layoutPayload: layoutPayloadSchema,

@@ -36,7 +36,11 @@ function makeDefaultData(type: string): Record<string, unknown> {
     case "GenerateNode":
       return { preferredProvider: "gpt-image-2", aspectRatio: "1:1", status: "idle" };
     case "OutputNode":
-      return {};
+      return {
+        preferredProvider: "gpt-image-2",
+        aspectRatio: "1:1",
+        status: "idle",
+      };
     default:
       return {};
   }
@@ -174,11 +178,16 @@ export function CanvasClient() {
             onPaneClick={onPaneClick}
             onInit={setRfInstance}
             fitView
-            className="bg-[#F5F4F1]"
+            colorMode="dark"
+            className="bg-bg"
           >
-            <Background color="#E5E2DB" gap={20} />
-            <Controls className="!border !border-[#E5E2DB] !shadow-none" />
-            <MiniMap className="!border !border-[#E5E2DB] !shadow-none" nodeColor="#E5E2DB" />
+            <Background color="rgba(255,255,255,0.06)" gap={20} />
+            <Controls className="!border !border-white/10 !bg-surface !shadow-none [&_button]:!text-zinc-300" />
+            <MiniMap
+              className="!border !border-white/10 !bg-surface !shadow-none"
+              maskColor="rgba(9,9,11,0.85)"
+              nodeColor="#3f3f46"
+            />
           </ReactFlow>
         </div>
         <PropertiesPanel node={selectedNode} onChange={onNodeDataChange} />
