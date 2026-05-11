@@ -23,7 +23,7 @@ export function ClientsClient() {
 
   async function loadClients() {
     const res = await fetch("/api/clients");
-    if (!res.ok) return;
+    if (!res.ok) { setLoading(false); return; }
     const data = (await res.json()) as { clients: ClientRow[] };
     setClients(data.clients);
     setLoading(false);
@@ -89,9 +89,9 @@ export function ClientsClient() {
           >
             {creating ? "Criando…" : "Criar"}
           </button>
-          {error && <p className="text-xs text-red-500">{error}</p>}
         </form>
       )}
+      {error && formOpen && <p className="mb-4 text-xs text-red-500">{error}</p>}
 
       {clients.length === 0 ? (
         <div className="bg-white rounded-xl border border-dashed p-12 text-center">
