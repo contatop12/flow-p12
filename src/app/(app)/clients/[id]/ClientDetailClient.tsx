@@ -103,7 +103,8 @@ export function ClientDetailClient({ clientId }: { clientId: string }) {
       const data = (await res.json()) as { error?: string };
       setError(data.error ?? "Erro ao fazer upload do logo");
     } else {
-      setClient((prev) => prev ? { ...prev, logoR2Key: `updated-${Date.now()}` } : prev);
+      const data = (await res.json()) as { r2Key: string };
+      setClient((prev) => prev ? { ...prev, logoR2Key: data.r2Key } : prev);
     }
     setUploadingLogo(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
