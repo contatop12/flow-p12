@@ -1,4 +1,4 @@
-import type { Connection } from "@xyflow/react";
+import type { Connection, Edge } from "@xyflow/react";
 import type { ConnectionType } from "@/types";
 
 const VALID_TYPES = new Set<string>(["text", "image", "brand", "layout", "output"]);
@@ -19,7 +19,7 @@ const TARGET_ACCEPTS: Record<string, ConnectionType[]> = {
   "src-in": ["image", "layout"],
 };
 
-export function isValidConnection(connection: Connection): boolean {
+export function isValidConnection(connection: Edge | Connection): boolean {
   const sourceType = getHandleType(connection.sourceHandle ?? null);
   if (!sourceType) return false;
   const accepted = TARGET_ACCEPTS[connection.targetHandle ?? ""] ?? [];
