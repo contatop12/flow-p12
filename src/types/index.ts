@@ -45,6 +45,7 @@ export interface BrandPayload {
 
 export interface LayoutPayload {
   image: string;
+  /** 0–100 percent fidelity to the reference layout, in steps of 10 */
   fidelity: number;
   techMode: TechMode;
   controlType: ControlType;
@@ -65,10 +66,11 @@ export interface InjectionRequest {
   brandPayload?: BrandPayload;
   layoutPayload?: LayoutPayload;
   textPayload: TextPayload;
-  nodeType: NodeType;
+  nodeType: Extract<NodeType, "Generate" | "Edit" | "StyleTransfer" | "ConsistencyPack" | "Upscale" | "PromptAgent">;
 }
 
 export interface RoutingDecision {
+  pipeline: Pipeline;
   provider: string;
   model: string;
   params: Record<string, unknown>;
