@@ -13,10 +13,10 @@ import {
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/canvas", label: "Canvas", icon: Workflow },
-  { href: "/clients", label: "Clientes", icon: Users },
-  { href: "/gallery", label: "Galeria", icon: Image },
-  { href: "/settings", label: "Config", icon: Settings },
+  { href: "/canvas",    label: "Canvas",    icon: Workflow        },
+  { href: "/clients",   label: "Clientes",  icon: Users           },
+  { href: "/gallery",   label: "Galeria",   icon: Image           },
+  { href: "/settings",  label: "Config",    icon: Settings        },
 ];
 
 export function Navbar() {
@@ -31,9 +31,7 @@ export function Navbar() {
         if (!cancelled && data?.user?.email) setEmail(data.user.email);
       })
       .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -42,44 +40,49 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="h-14 border-b border-gray-800 bg-gray-900 flex items-center px-4 gap-6 shrink-0">
-      <Link href="/dashboard" className="flex items-center gap-2 mr-4">
-        <span className="w-6 h-6 rounded bg-purple-500 flex items-center justify-center text-white text-xs font-bold">
-          F
-        </span>
-        <span className="text-white font-bold text-sm tracking-tight">
+    <nav className="h-12 border-b bg-white flex items-center px-6 gap-8 shrink-0">
+      {/* Logo */}
+      <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
+        <div className="w-5 h-5 rounded bg-[#18181B] flex items-center justify-center">
+          <span className="text-white text-[9px] font-bold tracking-widest">F</span>
+        </div>
+        <span className="text-[#18181B] font-semibold text-sm tracking-tight">
           Flow P12
         </span>
       </Link>
 
-      <div className="flex items-center gap-1 flex-1">
-        {links.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={clsx(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-              pathname.startsWith(href)
-                ? "bg-gray-800 text-white"
-                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
-            )}
-          >
-            <Icon size={15} />
-            {label}
-          </Link>
-        ))}
+      {/* Nav links */}
+      <div className="flex items-center gap-0.5 flex-1">
+        {links.map(({ href, label }) => {
+          const active = pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={clsx(
+                "px-3 py-1.5 rounded-md text-sm transition-colors duration-150",
+                active
+                  ? "bg-[#F5F4F1] text-[#18181B] font-medium"
+                  : "text-[#71717A] hover:text-[#18181B] hover:bg-[#F5F4F1]"
+              )}
+            >
+              {label}
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="flex items-center gap-3">
-        {email ? (
-          <span className="max-w-[200px] truncate text-xs text-gray-400" title={email}>
+      {/* User */}
+      <div className="flex items-center gap-4 shrink-0">
+        {email && (
+          <span className="text-xs text-[#A1A1AA] max-w-[160px] truncate">
             {email}
           </span>
-        ) : null}
+        )}
         <button
           type="button"
           onClick={signOut}
-          className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-200 hover:bg-gray-700"
+          className="text-xs text-[#71717A] hover:text-[#18181B] transition-colors duration-150"
         >
           Sair
         </button>

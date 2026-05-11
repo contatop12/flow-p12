@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import "./globals.css";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Flow P12 — AI Brand Studio",
@@ -13,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className="dark">
-      <body className="bg-gray-950 text-white antialiased">{children}</body>
+    <html lang="pt-BR" className={outfit.variable}>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

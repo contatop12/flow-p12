@@ -1,21 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #a855f7;
-  --color-layout: #3b82f6;
-  --color-node-text: #84cc16;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  /* Functional node/edge colors — preserved */
+  --color-brand:      #a855f7;
+  --color-layout:     #3b82f6;
+  --color-node-text:  #84cc16;
   --color-node-image: #9ca3af;
+
+  /* Design system */
+  --color-bg:         #F5F4F1;
+  --color-surface:    #FFFFFF;
+  --color-border:     #E5E2DB;
+  --color-ink:        #18181B;
+  --color-muted:      #71717A;
+  --color-subtle:     #A1A1AA;
+  --color-accent:     #0D9488;
+  --color-accent-dim: #CCFBF1;
 }
 
 @layer base {
   * {
-    border-color: theme("colors.gray.800");
+    border-color: var(--color-border);
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
   }
 }
 
 @layer utilities {
-  .edge-text { --edge-color: #84cc16; }
-  .edge-image { --edge-color: #9ca3af; }
-  .edge-brand { --edge-color: #a855f7; }
+  .edge-text   { --edge-color: #84cc16; }
+  .edge-image  { --edge-color: #9ca3af; }
+  .edge-brand  { --edge-color: #a855f7; }
   .edge-layout { --edge-color: #3b82f6; }
 }

@@ -35,48 +35,66 @@ export function SignInForm() {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="w-full max-w-sm space-y-4 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-2xl"
-    >
-      <div>
-        <h1 className="text-xl font-semibold text-white">Entrar</h1>
-        <p className="mt-1 text-sm text-gray-400">Flow P12 — acesso interno</p>
-      </div>
-      {error ? (
-        <p className="rounded-md border border-red-900/50 bg-red-950/40 px-3 py-2 text-sm text-red-200">
-          {error}
+    <div className="w-full max-w-sm">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="w-8 h-8 rounded-lg bg-[#18181B] flex items-center justify-center mb-6 lg:hidden">
+          <span className="text-white text-xs font-bold tracking-widest">F</span>
+        </div>
+        <h1 className="text-2xl font-semibold text-[#18181B] tracking-tight">
+          Bom dia
+        </h1>
+        <p className="mt-1 text-sm text-[#71717A]">
+          Entre na sua conta Flow P12
         </p>
-      ) : null}
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-gray-300">E-mail</span>
-        <input
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(ev) => setEmail(ev.target.value)}
-          required
-          className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white outline-none ring-purple-500 focus:ring-2"
-        />
-      </label>
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-gray-300">Senha</span>
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(ev) => setPassword(ev.target.value)}
-          required
-          className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white outline-none ring-purple-500 focus:ring-2"
-        />
-      </label>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-md bg-purple-600 py-2 text-sm font-medium text-white hover:bg-purple-500 disabled:opacity-50"
-      >
-        {loading ? "Entrando…" : "Entrar"}
-      </button>
-    </form>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={onSubmit} className="space-y-4">
+        {error && (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-600">
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label className="block text-xs font-medium text-[#52525B] mb-1.5">
+            E-mail
+          </label>
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(ev) => setEmail(ev.target.value)}
+            required
+            placeholder="voce@empresa.com"
+            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-[#18181B] placeholder-[#A1A1AA] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all duration-150"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-[#52525B] mb-1.5">
+            Senha
+          </label>
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(ev) => setPassword(ev.target.value)}
+            required
+            placeholder="••••••••"
+            className="w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-[#18181B] outline-none focus:border-[#18181B] focus:ring-2 focus:ring-[#18181B]/8 transition-all duration-150"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-lg bg-[#18181B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#27272A] active:bg-[#3F3F46] disabled:opacity-40 transition-colors duration-150 mt-2"
+        >
+          {loading ? "Entrando…" : "Entrar"}
+        </button>
+      </form>
+    </div>
   );
 }

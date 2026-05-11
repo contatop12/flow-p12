@@ -1,8 +1,7 @@
 export default function CanvasPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-white mb-2">Canvas</h1>
-      <p className="text-gray-400">Em desenvolvimento — Plan 2</p>
+    <div className="flex-1 flex items-center justify-center h-full">
+      <p className="text-sm text-[#A1A1AA]">Canvas — Plan 2</p>
     </div>
   );
 }

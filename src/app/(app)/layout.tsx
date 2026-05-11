@@ -8,7 +8,7 @@ export default function AppLayout({
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
-      <main className="flex-1 overflow-auto bg-gray-950">{children}</main>
+      <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );
 }
