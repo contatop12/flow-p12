@@ -9,7 +9,8 @@ export async function getFromKV<T>(
   try {
     return JSON.parse(raw) as T;
   } catch {
-    return raw as unknown as T;
+    console.warn(`[kv] Failed to parse value for key "${key}" — returning null`);
+    return null;
   }
 }
 
@@ -34,10 +35,17 @@ export async function getOrSet<T>(
   factory: () => Promise<T>,
   ttlSeconds: number
 ): Promise<T> {
-  const cached = await getFromKV<T>(kv, key);
-  if (cached !== null) return cached;
+  const raw = await kv.get(key);
+  if (raw !== null) {
+    try {
+      const parsed = JSON.parse(raw) as { v: T };
+      return parsed.v;
+    } catch {
+      // malformed cache entry — recompute
+    }
+  }
   const value = await factory();
-  await setInKV(kv, key, value, ttlSeconds);
+  await kv.put(key, JSON.stringify({ v: value }), { expirationTtl: ttlSeconds });
   return value;
 }
 

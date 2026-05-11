@@ -30,7 +30,13 @@ export async function findOrCreateUser(
 ): Promise<void> {
   await db
     .prepare(
-      "INSERT OR REPLACE INTO users (id, email, org_id, role, updated_at) VALUES (?, ?, ?, ?, unixepoch())"
+      `INSERT INTO users (id, email, org_id, role)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         email = excluded.email,
+         org_id = excluded.org_id,
+         role = excluded.role,
+         updated_at = unixepoch()`
     )
     .bind(userId, email, orgId, role)
     .run();

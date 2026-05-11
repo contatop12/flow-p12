@@ -11,10 +11,11 @@ export function buildR2Key(
 export async function uploadToR2(
   r2: R2Bucket,
   key: string,
-  data: ArrayBuffer,
+  data: ArrayBuffer | ReadableStream,
   contentType: string = "image/png"
 ): Promise<string> {
-  await r2.put(key, data, { httpMetadata: { contentType } });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await r2.put(key, data as any, { httpMetadata: { contentType } });
   return key;
 }
 
