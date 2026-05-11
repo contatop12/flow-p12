@@ -7,8 +7,6 @@ import {
   timingSafeEqualStr,
 } from "@/lib/auth-session";
 
-export const runtime = "edge";
-
 const bodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
