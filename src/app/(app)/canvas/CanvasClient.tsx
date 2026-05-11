@@ -106,6 +106,24 @@ export function CanvasClient() {
     setSelectedNode(null);
   }, []);
 
+  const onNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      const ids = new Set(deleted.map((n) => n.id));
+      setEdges((eds) => eds.filter((e) => !ids.has(e.source) && !ids.has(e.target)));
+      setSelectedNode((s) => (s && ids.has(s.id) ? null : s));
+    },
+    [setEdges]
+  );
+
+  const onDeleteNode = useCallback(
+    (nodeId: string) => {
+      setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+      setEdges((eds) => eds.filter((e) => e.source !== nodeId && e.target !== nodeId));
+      setSelectedNode((s) => (s?.id === nodeId ? null : s));
+    },
+    [setNodes, setEdges]
+  );
+
   const onNodeDataChange = useCallback(
     (id: string, data: Record<string, unknown>) => {
       setNodes((nds) =>
@@ -176,6 +194,8 @@ export function CanvasClient() {
             onDrop={onDrop}
             onNodeClick={onNodeClick}
             onPaneClick={onPaneClick}
+            onNodesDelete={onNodesDelete}
+            deleteKeyCode={["Backspace", "Delete"]}
             onInit={setRfInstance}
             fitView
             colorMode="dark"
@@ -190,7 +210,11 @@ export function CanvasClient() {
             />
           </ReactFlow>
         </div>
-        <PropertiesPanel node={selectedNode} onChange={onNodeDataChange} />
+        <PropertiesPanel
+          node={selectedNode}
+          onChange={onNodeDataChange}
+          onDeleteNode={onDeleteNode}
+        />
       </div>
       <ActionBar onSave={handleSave} onLoad={handleLoad} isSaving={isSaving} />
     </div>

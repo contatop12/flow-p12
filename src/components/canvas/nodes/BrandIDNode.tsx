@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Handle, Position, useReactFlow, type NodeProps } from "@xyflow/react";
 import { BadgeCheck } from "lucide-react";
 import type { BrandPayload } from "@/types";
-import { NodeShell } from "./NodeShell";
+import { NodeShell, NodeCardHeader } from "./NodeShell";
+import { HANDLE_COLORS, handleProps } from "./canvasHandleStyles";
 
 interface ClientOption {
   id: string;
@@ -76,64 +77,54 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
   const selectedClient = clients.find((c) => c.id === selectedClientId);
 
   return (
-    <NodeShell selected={selected} className="w-52">
-      <div className="px-3 pt-3 pb-2">
-        <div className="flex items-center gap-2 mb-2 border-b border-white/10 pb-2">
-          <BadgeCheck className="size-3.5 text-brand shrink-0 opacity-90" aria-hidden />
-          <span className="text-[11px] font-medium tracking-tight text-zinc-200 truncate">
-            {nodeData.label ?? "Brand ID"}
-          </span>
+    <NodeShell selected={selected} className="w-56">
+      <NodeCardHeader title={nodeData.label ?? "Brand ID"} icon={BadgeCheck} />
+      <div className="px-3.5 pb-3.5 pt-0.5 space-y-2">
+        <div className="rounded-xl bg-black/30 p-2.5">
+          <select
+            value={selectedClientId}
+            onChange={(e) => handleClientChange(e.target.value)}
+            disabled={loadingClients}
+            className="nodrag nopan w-full rounded-lg border border-white/[0.06] bg-[#141414] px-2.5 py-2 text-[12px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-brand/35"
+          >
+            <option value="">{loadingClients ? "Carregando…" : "Selecione um cliente"}</option>
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+
+          {selectedClient && (
+            <div className="mt-2.5 space-y-1.5">
+              {(["applyBrandTone", "applyPalette", "applyTypography"] as const).map((key) => {
+                const labels: Record<string, string> = {
+                  applyBrandTone: "Tom",
+                  applyPalette: "Paleta",
+                  applyTypography: "Tipografia",
+                };
+                return (
+                  <label key={key} className="flex items-center gap-2 cursor-pointer nodrag">
+                    <input
+                      type="checkbox"
+                      checked={toggles[key]}
+                      onChange={() => handleToggle(key)}
+                      className="rounded border-white/20 bg-[#141414] accent-brand"
+                    />
+                    <span className="text-[12px] text-zinc-400">{labels[key]}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
-
-        <select
-          value={selectedClientId}
-          onChange={(e) => handleClientChange(e.target.value)}
-          disabled={loadingClients}
-          className="nodrag nopan w-full px-2 py-1.5 text-xs rounded-lg border border-white/10 bg-surface-2 text-ink focus:outline-none focus:ring-1 focus:ring-brand/40 mb-2"
-        >
-          <option value="">{loadingClients ? "Carregando…" : "Selecione um cliente"}</option>
-          {clients.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-
-        {selectedClient && (
-          <div className="space-y-1">
-            {(["applyBrandTone", "applyPalette", "applyTypography"] as const).map((key) => {
-              const labels: Record<string, string> = {
-                applyBrandTone: "Tom",
-                applyPalette: "Paleta",
-                applyTypography: "Tipografia",
-              };
-              return (
-                <label key={key} className="flex items-center gap-2 cursor-pointer nodrag">
-                  <input
-                    type="checkbox"
-                    checked={toggles[key]}
-                    onChange={() => handleToggle(key)}
-                    className="rounded border-white/20 bg-surface-2 accent-brand"
-                  />
-                  <span className="text-[11px] text-muted">{labels[key]}</span>
-                </label>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       <Handle
         type="source"
         position={Position.Right}
         id="brand-out"
-        style={{
-          background: "#a855f7",
-          border: "2px solid #18181b",
-          width: 10,
-          height: 10,
-          right: -6,
-        }}
+        style={handleProps(HANDLE_COLORS.brand, "right")}
       />
     </NodeShell>
   );

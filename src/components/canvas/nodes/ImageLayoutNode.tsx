@@ -1,10 +1,12 @@
 "use client";
 
+import type { ChangeEvent, DragEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 import { Handle, Position, useReactFlow, type NodeProps } from "@xyflow/react";
-import { LayoutTemplate } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { clsx } from "clsx";
-import { NodeShell } from "./NodeShell";
+import { NodeShell, NodeCardHeader } from "./NodeShell";
+import { HANDLE_COLORS, handleProps } from "./canvasHandleStyles";
 
 export type ImageLayoutNodeData = {
   imageUrl?: string;
@@ -96,7 +98,7 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
     [applyImageUrl]
   );
 
-  const onDragOver = useCallback((e: React.DragEvent) => {
+  const onDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (dataTransferHasFiles(e.dataTransfer)) {
@@ -107,7 +109,7 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
     }
   }, []);
 
-  const onDragLeave = useCallback((e: React.DragEvent) => {
+  const onDragLeave = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const next = e.relatedTarget as HTMLElement | null;
@@ -116,7 +118,7 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
   }, []);
 
   const onDrop = useCallback(
-    async (e: React.DragEvent) => {
+    async (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
       setDragOver(false);
@@ -127,7 +129,7 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
   );
 
   const onFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       e.target.value = "";
       await processFile(file);
@@ -136,12 +138,9 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
   );
 
   return (
-    <NodeShell selected={selected} className="w-52">
-      <div className="px-3 py-2 border-b border-white/10 flex items-center gap-2">
-        <LayoutTemplate className="size-3.5 text-layout shrink-0 opacity-90" aria-hidden />
-        <span className="text-[11px] font-medium tracking-tight text-zinc-200">Image-Layout</span>
-      </div>
-      <div className="px-3 py-2 space-y-2">
+    <NodeShell selected={selected} className="w-56">
+      <NodeCardHeader title="Image-Layout" icon={ImageIcon} />
+      <div className="px-3.5 pb-3.5 pt-0.5 space-y-2">
         <input
           ref={fileInputRef}
           type="file"
@@ -150,16 +149,16 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
           onChange={onFileChange}
         />
         {d.imageUrl ? (
-          <div className="relative group">
+          <div className="relative group rounded-2xl bg-white p-1.5">
             <img
               src={d.imageUrl}
               alt="Layout reference"
-              className="w-full h-20 object-cover rounded-lg border border-white/10 nodrag nopan"
+              className="w-full h-28 object-cover rounded-[14px] nodrag nopan"
               draggable={false}
             />
             <button
               type="button"
-              className="nodrag nopan absolute top-1 right-1 rounded bg-zinc-950/90 px-1.5 py-0.5 text-[9px] font-medium text-zinc-300 shadow border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="nodrag nopan absolute top-2.5 right-2.5 rounded-lg bg-zinc-900/85 px-2 py-1 text-[10px] font-medium text-zinc-200 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => {
                 setError(null);
                 applyImageUrl(undefined);
@@ -183,18 +182,18 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
             onDragLeave={onDragLeave}
             onDrop={onDrop}
             className={clsx(
-              "nodrag nopan w-full h-16 rounded-lg border border-dashed flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
-              dragOver && "border-layout bg-layout/10",
-              !dragOver && "border-white/15 hover:bg-surface-2/80",
+              "nodrag nopan w-full h-24 rounded-2xl bg-white/95 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-layout/40",
+              dragOver && "ring-2 ring-layout/50 bg-white",
+              !dragOver && "hover:bg-white",
               loading && "pointer-events-none opacity-70"
             )}
           >
             {loading ? (
-              <p className="text-[10px] text-muted">Carregando…</p>
+              <p className="text-[11px] text-zinc-500">Carregando…</p>
             ) : (
               <>
-                <p className="text-[10px] text-subtle">Arraste imagem</p>
-                <p className="text-[9px] text-subtle">ou clique</p>
+                <p className="text-[11px] text-zinc-600 font-medium">Arraste imagem</p>
+                <p className="text-[10px] text-zinc-400">ou clique</p>
               </>
             )}
           </div>
@@ -204,12 +203,12 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
             {error}
           </p>
         )}
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] text-muted">Fidelidade</span>
-          <span className="text-[10px] font-semibold text-zinc-200">{d.fidelity}%</span>
+        <div className="flex items-center justify-between px-0.5">
+          <span className="text-[11px] text-zinc-500">Fidelidade</span>
+          <span className="text-[11px] font-medium text-zinc-200">{d.fidelity}%</span>
         </div>
         {isControlNet && (
-          <div className="flex items-center gap-1 rounded border border-layout/30 bg-layout/10 px-2 py-1">
+          <div className="flex items-center gap-1 rounded-lg border border-layout/25 bg-layout/10 px-2 py-1.5">
             <span className="text-[10px] text-layout font-medium">ControlNet · {d.controlType}</span>
           </div>
         )}
@@ -218,25 +217,13 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
         type="target"
         position={Position.Left}
         id="image-in"
-        style={{
-          background: "#9ca3af",
-          border: "2px solid #18181b",
-          width: 10,
-          height: 10,
-          left: -6,
-        }}
+        style={handleProps(HANDLE_COLORS.image, "left")}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="layout-out"
-        style={{
-          background: "#3b82f6",
-          border: "2px solid #18181b",
-          width: 10,
-          height: 10,
-          right: -6,
-        }}
+        style={handleProps(HANDLE_COLORS.layout, "right")}
       />
     </NodeShell>
   );

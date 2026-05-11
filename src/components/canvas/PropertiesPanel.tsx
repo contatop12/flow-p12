@@ -2,6 +2,7 @@
 "use client";
 import { useCallback, useRef, useState } from "react";
 import type { Node } from "@xyflow/react";
+import { Trash2 } from "lucide-react";
 import type { TextNodeData } from "./nodes/TextNode";
 import type { BrandIDNodeData } from "./nodes/BrandIDNode";
 import {
@@ -18,9 +19,10 @@ const inputBase =
 type PanelProps = {
   node: Node | null;
   onChange: (id: string, data: Record<string, unknown>) => void;
+  onDeleteNode: (id: string) => void;
 };
 
-export function PropertiesPanel({ node, onChange }: PanelProps) {
+export function PropertiesPanel({ node, onChange, onDeleteNode }: PanelProps) {
   if (!node) {
     return (
       <aside className="w-[280px] shrink-0 border-l border-white/10 bg-surface flex items-center justify-center">
@@ -42,6 +44,17 @@ export function PropertiesPanel({ node, onChange }: PanelProps) {
           {node.type?.replace("Node", "") ?? "Nó"}
         </p>
         <p className="text-[10px] text-subtle font-mono mt-0.5 break-all">{node.id}</p>
+        <button
+          type="button"
+          onClick={() => onDeleteNode(node.id)}
+          className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-500/25 bg-red-950/20 px-3 py-1.5 text-[11px] font-medium text-red-300 hover:bg-red-950/40 hover:border-red-500/40 transition-colors"
+        >
+          <Trash2 className="size-3.5 shrink-0 opacity-90" aria-hidden />
+          Remover nó
+        </button>
+        <p className="mt-2 text-[10px] text-subtle leading-snug">
+          Ou selecione o nó no canvas e pressione Delete / Backspace.
+        </p>
       </div>
 
       <div className="px-4 py-4 space-y-4">
