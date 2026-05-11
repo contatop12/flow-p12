@@ -8,7 +8,7 @@ assets = { directory = ".open-next/assets", binding = "ASSETS" }
 [[d1_databases]]
 binding = "DB"
 database_name = "flow-p12-db"
-database_id = "placeholder-replace-after-wrangler-d1-create"
+database_id = "ebe2e0d8-bb4e-4b36-951a-a7230dc2371e"
 
 [[r2_buckets]]
 binding = "R2"
@@ -16,7 +16,7 @@ bucket_name = "flow-p12-images"
 
 [[kv_namespaces]]
 binding = "KV"
-id = "placeholder-replace-after-wrangler-kv-create"
+id = "86ca5e692539459eafd39049e4dd421b"
 
 [vars]
 NODE_ENV = "production"
