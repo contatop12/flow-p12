@@ -101,39 +101,42 @@ function TextPanel({ data, update }: { data: TextNodeData; update: (p: Record<st
   );
 }
 
-function BrandPanel({ data, update }: { data: BrandIDNodeData; update: (p: Record<string, unknown>) => void }) {
+function BrandPanel({ data }: { data: BrandIDNodeData; update: (p: Record<string, unknown>) => void }) {
+  const bp = data.brandPayload;
   return (
     <>
       <Field label="Cliente">
         <p className="text-xs text-[#71717A]">
-          {data.clientName ?? "Nenhum cliente selecionado"}
+          {bp?.clientName ?? "Nenhum cliente selecionado"}
           {" "}
           <span className="text-[10px] text-[#A1A1AA]">(selecione no dropdown do nó)</span>
         </p>
       </Field>
-      <Field label="Injetar na geração">
-        <div className="space-y-2">
-          {(["applyPalette", "applyTypography", "applyBrandTone", "applyArtRefs"] as const).map((key) => {
-            const labels: Record<string, string> = {
-              applyPalette: "Paleta de cores",
-              applyTypography: "Tipografia",
-              applyBrandTone: "Tom visual",
-              applyArtRefs: "Referências de estilo",
-            };
-            return (
-              <label key={key} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={data[key]}
-                  onChange={(e) => update({ [key]: e.target.checked })}
-                  className="rounded border-[#E5E2DB]"
-                />
-                <span className="text-xs text-[#52525B]">{labels[key]}</span>
-              </label>
-            );
-          })}
-        </div>
-      </Field>
+      {bp && (
+        <Field label="Injetar na geração">
+          <div className="space-y-2">
+            {(["applyPalette", "applyTypography", "applyBrandTone", "applyArtRefs"] as const).map((key) => {
+              const labels: Record<string, string> = {
+                applyPalette: "Paleta de cores",
+                applyTypography: "Tipografia",
+                applyBrandTone: "Tom visual",
+                applyArtRefs: "Referências de estilo",
+              };
+              return (
+                <label key={key} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={bp.toggles[key]}
+                    readOnly
+                    className="rounded border-[#E5E2DB]"
+                  />
+                  <span className="text-xs text-[#52525B]">{labels[key]}</span>
+                </label>
+              );
+            })}
+          </div>
+        </Field>
+      )}
     </>
   );
 }

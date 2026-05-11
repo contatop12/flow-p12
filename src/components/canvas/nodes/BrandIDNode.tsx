@@ -1,78 +1,134 @@
 "use client";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { clsx } from "clsx";
 
-export type BrandIDNodeData = {
-  clientId?: string;
-  clientName?: string;
+import { useEffect, useState } from "react";
+import { Handle, Position, useReactFlow, type NodeProps } from "@xyflow/react";
+import type { BrandPayload } from "@/types";
+
+interface ClientOption {
+  id: string;
+  name: string;
   palette?: string[];
-  applyPalette: boolean;
-  applyTypography: boolean;
-  applyBrandTone: boolean;
-  applyArtRefs: boolean;
-};
+  typography?: { primary: string; secondary: string };
+  brandTone?: string;
+}
 
-export function BrandIDNode({ data, selected }: NodeProps) {
-  const d = data as BrandIDNodeData;
+export interface BrandIDNodeData extends Record<string, unknown> {
+  label?: string;
+  brandPayload?: BrandPayload;
+}
+
+export function BrandIDNode({ id, data, selected }: NodeProps) {
+  const nodeData = data as BrandIDNodeData;
+  const { updateNodeData } = useReactFlow();
+  const [clients, setClients] = useState<ClientOption[]>([]);
+  const [loadingClients, setLoadingClients] = useState(true);
+  const [selectedClientId, setSelectedClientId] = useState<string>(
+    nodeData.brandPayload?.clientId ?? ""
+  );
+
+  const [toggles, setToggles] = useState({
+    applyPalette: nodeData.brandPayload?.toggles.applyPalette ?? true,
+    applyTypography: nodeData.brandPayload?.toggles.applyTypography ?? true,
+    applyBrandTone: nodeData.brandPayload?.toggles.applyBrandTone ?? true,
+    applyArtRefs: nodeData.brandPayload?.toggles.applyArtRefs ?? false,
+  });
+
+  useEffect(() => {
+    fetch("/api/clients")
+      .then((r) => r.json())
+      .then((res: { clients: ClientOption[] }) => {
+        setClients(res.clients);
+        setLoadingClients(false);
+      })
+      .catch(() => setLoadingClients(false));
+  }, []);
+
+  function updatePayload(clientId: string, newToggles: typeof toggles) {
+    const client = clients.find((c) => c.id === clientId);
+    if (!client) {
+      updateNodeData(id, { brandPayload: undefined });
+      return;
+    }
+    const payload: BrandPayload = {
+      clientId: client.id,
+      clientName: client.name,
+      toggles: newToggles,
+      palette: client.palette,
+      typography: client.typography,
+      brandTone: client.brandTone,
+    };
+    updateNodeData(id, { brandPayload: payload });
+  }
+
+  function handleClientChange(clientId: string) {
+    setSelectedClientId(clientId);
+    updatePayload(clientId, toggles);
+  }
+
+  function handleToggle(key: keyof typeof toggles) {
+    const newToggles = { ...toggles, [key]: !toggles[key] };
+    setToggles(newToggles);
+    updatePayload(selectedClientId, newToggles);
+  }
+
+  const selectedClient = clients.find((c) => c.id === selectedClientId);
 
   return (
-    <div className={clsx(
-      "w-52 rounded-lg border bg-white shadow-sm text-left",
-      selected && "ring-2 ring-[#a855f7] ring-offset-1"
-    )}>
-      <div className="px-3 py-2 border-b flex items-center gap-1.5">
-        <span className="text-xs">🎨</span>
-        <span className="text-xs font-semibold text-[#18181B]">Brand ID</span>
-      </div>
-      <div className="px-3 py-2 space-y-1.5">
-        <p className="text-xs font-medium text-[#18181B]">
-          {d.clientName || (
-            <span className="text-[#A1A1AA] italic">Selecionar cliente…</span>
-          )}
-        </p>
-        {d.palette && d.palette.length > 0 && (
-          <div className="flex gap-0.5">
-            {d.palette.slice(0, 6).map((color) => (
-              <span
-                key={color}
-                className="w-3 h-3 rounded-sm border border-white shadow-sm inline-block"
-                style={{ background: color }}
-              />
-            ))}
+    <div
+      className={`w-52 rounded-xl border bg-white shadow-sm transition-shadow ${
+        selected ? "shadow-md ring-2 ring-[#a855f7]" : ""
+      }`}
+    >
+      <div className="px-3 pt-3 pb-2">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-mono text-[#a855f7] bg-purple-50 px-1.5 py-0.5 rounded">brand</span>
+          <span className="text-xs font-medium text-[#18181B] truncate">
+            {nodeData.label ?? "Brand ID"}
+          </span>
+        </div>
+
+        <select
+          value={selectedClientId}
+          onChange={(e) => handleClientChange(e.target.value)}
+          disabled={loadingClients}
+          className="w-full px-2 py-1.5 text-xs rounded-lg border border-[#E5E2DB] bg-white text-[#18181B] focus:outline-none focus:ring-2 focus:ring-[#a855f7] mb-2"
+        >
+          <option value="">{loadingClients ? "Carregando…" : "Selecione um cliente"}</option>
+          {clients.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+
+        {selectedClient && (
+          <div className="space-y-1">
+            {(["applyBrandTone", "applyPalette", "applyTypography"] as const).map((key) => {
+              const labels: Record<string, string> = {
+                applyBrandTone: "Tom",
+                applyPalette: "Paleta",
+                applyTypography: "Tipografia",
+              };
+              return (
+                <label key={key} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={toggles[key]}
+                    onChange={() => handleToggle(key)}
+                    className="rounded border-[#E5E2DB] accent-[#a855f7]"
+                  />
+                  <span className="text-[11px] text-[#71717A]">{labels[key]}</span>
+                </label>
+              );
+            })}
           </div>
         )}
-        <div className="flex gap-1 flex-wrap pt-0.5">
-          <Toggle active={d.applyPalette} label="P" />
-          <Toggle active={d.applyTypography} label="T" />
-          <Toggle active={d.applyBrandTone} label="V" />
-          <Toggle active={d.applyArtRefs} label="R" />
-        </div>
       </div>
+
       <Handle
         type="source"
         position={Position.Right}
         id="brand-out"
-        style={{
-          background: "#a855f7",
-          border: "2px solid white",
-          width: 10,
-          height: 10,
-          right: -6,
-        }}
+        style={{ background: "#a855f7", width: 10, height: 10 }}
       />
     </div>
-  );
-}
-
-function Toggle({ active, label }: { active: boolean; label: string }) {
-  return (
-    <span className={clsx(
-      "text-[10px] rounded px-1 font-medium",
-      active
-        ? "bg-[#F5F3FF] text-[#7C3AED]"
-        : "bg-[#F5F4F1] text-[#A1A1AA]"
-    )}>
-      {label}
-    </span>
   );
 }
