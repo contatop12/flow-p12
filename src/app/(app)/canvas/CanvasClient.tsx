@@ -21,6 +21,7 @@ import { isValidConnection, getHandleType } from "@/components/canvas/lib/connec
 import { NodePalette } from "@/components/canvas/NodePalette";
 import { PropertiesPanel } from "@/components/canvas/PropertiesPanel";
 import { ActionBar } from "@/components/canvas/ActionBar";
+import { SaveWorkflowModal } from "@/components/canvas/SaveWorkflowModal";
 
 const DEFAULT_NODES: Node[] = [];
 const DEFAULT_EDGES: Edge[] = [];
@@ -53,6 +54,11 @@ export function CanvasClient() {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [workflowId, setWorkflowId] = useState<string | null>(null);
+  const [workflowName, setWorkflowName] = useState("");
+  const [workflowDescription, setWorkflowDescription] = useState("");
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveModalError, setSaveModalError] = useState<string | null>(null);
+
   const onConnect = useCallback(
     (params: Connection) => {
       const sourceType = getHandleType(params.sourceHandle ?? null);
@@ -80,8 +86,6 @@ export function CanvasClient() {
         e.dataTransfer.getData("text/plain");
       if (!type || !rfInstance) return;
 
-      // screenToFlowPosition espera coordenadas de tela (clientX/clientY), não relativas ao wrapper.
-      // Ver: https://reactflow.dev/examples/interaction/drag-and-drop
       const position = rfInstance.screenToFlowPosition({
         x: e.clientX,
         y: e.clientY,
@@ -134,39 +138,79 @@ export function CanvasClient() {
     [setNodes]
   );
 
-  const handleSave = useCallback(async () => {
-    if (!rfInstance) return;
-    setIsSaving(true);
-    try {
-      const graph = rfInstance.toObject();
-      const body = { name: "Workflow", graphJson: JSON.stringify(graph) };
+  const syncOutputNodesWorkflowId = useCallback(
+    (id: string) => {
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.type === "OutputNode" ? { ...n, data: { ...n.data, workflowId: id } } : n
+        )
+      );
+    },
+    [setNodes]
+  );
 
-      if (workflowId) {
-        await fetch(`/api/workflows/${workflowId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-      } else {
-        const res = await fetch("/api/workflows", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        if (res.ok) {
-          const data = await res.json() as { id: string };
+  const openSaveDialog = useCallback(() => {
+    if (!rfInstance) return;
+    setSaveModalError(null);
+    setSaveModalOpen(true);
+  }, [rfInstance]);
+
+  const performSave = useCallback(
+    async (name: string, description: string) => {
+      if (!rfInstance) return;
+      setIsSaving(true);
+      setSaveModalError(null);
+      try {
+        const graph = rfInstance.toObject();
+        const graphJson = JSON.stringify(graph);
+        const body = { name, description, graphJson };
+
+        if (workflowId) {
+          const res = await fetch(`/api/workflows/${workflowId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const j = (await res.json().catch(() => ({}))) as { error?: string };
+            throw new Error(j.error ?? `HTTP ${res.status}`);
+          }
+          setWorkflowName(name);
+          setWorkflowDescription(description);
+          syncOutputNodesWorkflowId(workflowId);
+          setSaveModalOpen(false);
+        } else {
+          const res = await fetch("/api/workflows", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const j = (await res.json().catch(() => ({}))) as { error?: string };
+            throw new Error(j.error ?? `HTTP ${res.status}`);
+          }
+          const data = (await res.json()) as { id: string };
           setWorkflowId(data.id);
+          setWorkflowName(name);
+          setWorkflowDescription(description);
+          syncOutputNodesWorkflowId(data.id);
+          setSaveModalOpen(false);
         }
+      } catch (e) {
+        setSaveModalError(e instanceof Error ? e.message : "Não foi possível guardar.");
+      } finally {
+        setIsSaving(false);
       }
-    } finally {
-      setIsSaving(false);
-    }
-  }, [rfInstance, workflowId]);
+    },
+    [rfInstance, workflowId, syncOutputNodesWorkflowId]
+  );
 
   const handleLoad = useCallback(async () => {
     const res = await fetch("/api/workflows");
     if (!res.ok) return;
-    const data = await res.json() as { workflows: Array<{ id: string; name: string; graphJson: string }> };
+    const data = await res.json() as {
+      workflows: Array<{ id: string; name: string; description?: string; graphJson: string }>;
+    };
     if (data.workflows.length === 0) return;
 
     const first = data.workflows[0];
@@ -174,10 +218,21 @@ export function CanvasClient() {
     setNodes(graph.nodes ?? []);
     setEdges(graph.edges ?? []);
     setWorkflowId(first.id);
+    setWorkflowName(first.name ?? "");
+    setWorkflowDescription(first.description ?? "");
   }, [setNodes, setEdges]);
 
   return (
     <div className="flex flex-col h-full">
+      <SaveWorkflowModal
+        open={saveModalOpen}
+        onOpenChange={setSaveModalOpen}
+        initialName={workflowName}
+        initialDescription={workflowDescription}
+        isSaving={isSaving}
+        error={saveModalError}
+        onConfirm={performSave}
+      />
       <div className="flex flex-1 min-h-0">
         <NodePalette />
         <div className="flex-1 relative min-h-0">
@@ -216,7 +271,12 @@ export function CanvasClient() {
           onDeleteNode={onDeleteNode}
         />
       </div>
-      <ActionBar onSave={handleSave} onLoad={handleLoad} isSaving={isSaving} />
+      <ActionBar
+        onSave={openSaveDialog}
+        onLoad={handleLoad}
+        isSaving={isSaving}
+        saveDisabled={!rfInstance}
+      />
     </div>
   );
 }

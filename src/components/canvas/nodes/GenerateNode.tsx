@@ -114,7 +114,7 @@ export function GenerateNode({ id, data, selected }: NodeProps) {
         )}
 
         {nodeData.forcedPipeline && (
-          <div className="rounded-lg border border-amber-500/30 bg-amber-950/30 px-2 py-1.5">
+          <div className="rounded-lg bg-amber-950/35 px-2 py-1.5 ring-1 ring-inset ring-amber-500/25">
             <p className="text-[10px] text-amber-200/90">{nodeData.forcedPipeline}</p>
           </div>
         )}

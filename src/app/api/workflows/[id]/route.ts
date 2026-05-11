@@ -25,13 +25,18 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const { orgId } = await getUserContext(email, DB);
 
   const row = await DB
-    .prepare("SELECT id, name, graph_json FROM workflows WHERE id = ? AND org_id = ?")
+    .prepare("SELECT id, name, description, graph_json FROM workflows WHERE id = ? AND org_id = ?")
     .bind(id, orgId)
-    .first<{ id: string; name: string; graph_json: string }>();
+    .first<{ id: string; name: string; description: string; graph_json: string }>();
 
   if (!row) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
 
-  return NextResponse.json({ id: row.id, name: row.name, graphJson: row.graph_json });
+  return NextResponse.json({
+    id: row.id,
+    name: row.name,
+    description: row.description ?? "",
+    graphJson: row.graph_json,
+  });
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -39,16 +44,24 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   if (!email) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const { id } = await params;
-  const body = (await request.json().catch(() => ({}))) as { name?: string; graphJson?: string };
+  const body = (await request.json().catch(() => ({}))) as {
+    name?: string;
+    description?: string;
+    graphJson?: string;
+  };
 
   const { DB } = getCloudflareBindings();
   const { orgId } = await getUserContext(email, DB);
 
+  const name = body.name?.trim() ?? "Workflow sem nome";
+  const description = body.description?.trim() ?? "";
+  const graphJson = body.graphJson ?? "{}";
+
   await DB
     .prepare(
-      "UPDATE workflows SET name = COALESCE(?, name), graph_json = COALESCE(?, graph_json), updated_at = unixepoch() WHERE id = ? AND org_id = ?"
+      "UPDATE workflows SET name = ?, description = ?, graph_json = ?, updated_at = unixepoch() WHERE id = ? AND org_id = ?"
     )
-    .bind(body.name ?? null, body.graphJson ?? null, id, orgId)
+    .bind(name, description, graphJson, id, orgId)
     .run();
 
   return NextResponse.json({ ok: true });

@@ -11,15 +11,15 @@ type NodeShellProps = {
 };
 
 /**
- * Cartão estilo referência: fundo #1e1e1e, cantos amplos, bordo quase invisível,
- * sem sombra pesada (minimalista).
+ * Cartão minimalista: um só contorno suave (ring inset), sem “bordo sobre bordo”.
+ * Cantos amplos; contraste com o canvas em vez de molduras empilhadas.
  */
 export function NodeShell({ selected, className, children }: NodeShellProps) {
   return (
     <div
       className={clsx(
-        "rounded-2xl border border-white/[0.05] bg-[#1e1e1e] text-left",
-        selected && "ring-1 ring-white/30",
+        "rounded-2xl bg-[#1e1e1e] text-left ring-1 ring-inset ring-white/[0.07]",
+        selected && "ring-2 ring-inset ring-white/25",
         className
       )}
     >
@@ -28,7 +28,7 @@ export function NodeShell({ selected, className, children }: NodeShellProps) {
   );
 }
 
-/** Cabeçalho tipo “Note / Input” das refs: ícone + título em branco. */
+/** Cabeçalho: ícone + título — integrado ao cartão, sem barra separadora. */
 export function NodeCardHeader({
   title,
   icon: Icon,
@@ -39,7 +39,7 @@ export function NodeCardHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 px-3.5 pt-3.5 pb-2">
+    <div className="flex items-center justify-between gap-2 px-3.5 pt-3 pb-1.5">
       <div className="flex items-center gap-2.5 min-w-0">
         <Icon className="size-4 shrink-0 text-zinc-100/95" strokeWidth={1.75} aria-hidden />
         <span className="text-[13px] font-medium tracking-tight text-zinc-50 truncate">{title}</span>

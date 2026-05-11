@@ -85,7 +85,7 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
             value={selectedClientId}
             onChange={(e) => handleClientChange(e.target.value)}
             disabled={loadingClients}
-            className="nodrag nopan w-full rounded-lg border border-white/[0.06] bg-[#141414] px-2.5 py-2 text-[12px] text-zinc-200 focus:outline-none focus:ring-1 focus:ring-brand/35"
+            className="nodrag nopan w-full rounded-lg bg-[#141414] px-2.5 py-2 text-[12px] text-zinc-200 ring-1 ring-inset ring-white/[0.06] focus:outline-none focus:ring-brand/40"
           >
             <option value="">{loadingClients ? "Carregando…" : "Selecione um cliente"}</option>
             {clients.map((c) => (

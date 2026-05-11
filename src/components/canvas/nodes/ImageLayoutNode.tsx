@@ -208,7 +208,7 @@ export function ImageLayoutNode({ id, data, selected }: NodeProps) {
           <span className="text-[11px] font-medium text-zinc-200">{d.fidelity}%</span>
         </div>
         {isControlNet && (
-          <div className="flex items-center gap-1 rounded-lg border border-layout/25 bg-layout/10 px-2 py-1.5">
+          <div className="flex items-center gap-1 rounded-lg bg-layout/15 px-2 py-1.5 ring-1 ring-inset ring-layout/20">
             <span className="text-[10px] text-layout font-medium">ControlNet · {d.controlType}</span>
           </div>
         )}

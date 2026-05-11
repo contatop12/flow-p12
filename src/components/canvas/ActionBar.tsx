@@ -6,15 +6,16 @@ type ActionBarProps = {
   onSave: () => void;
   onLoad: () => void;
   isSaving: boolean;
+  saveDisabled?: boolean;
 };
 
-export function ActionBar({ onSave, onLoad, isSaving }: ActionBarProps) {
+export function ActionBar({ onSave, onLoad, isSaving, saveDisabled }: ActionBarProps) {
   return (
     <div className="h-11 border-t border-white/10 bg-surface flex items-center px-4 gap-2 shrink-0">
       <button
         type="button"
         onClick={onSave}
-        disabled={isSaving}
+        disabled={isSaving || saveDisabled}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-50 transition-colors"
       >
         <Save className="size-3.5" aria-hidden />

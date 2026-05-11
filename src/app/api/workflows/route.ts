@@ -25,13 +25,23 @@ export async function GET() {
   const { orgId } = await getUserContext(email, DB);
 
   const rows = await DB
-    .prepare("SELECT id, name, graph_json, created_at, updated_at FROM workflows WHERE org_id = ? ORDER BY updated_at DESC LIMIT 20")
+    .prepare(
+      "SELECT id, name, description, graph_json, created_at, updated_at FROM workflows WHERE org_id = ? ORDER BY updated_at DESC LIMIT 20"
+    )
     .bind(orgId)
-    .all<{ id: string; name: string; graph_json: string; created_at: number; updated_at: number }>();
+    .all<{
+      id: string;
+      name: string;
+      description: string;
+      graph_json: string;
+      created_at: number;
+      updated_at: number;
+    }>();
 
   const workflows = (rows.results ?? []).map((r) => ({
     id: r.id,
     name: r.name,
+    description: r.description ?? "",
     graphJson: r.graph_json,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
@@ -44,8 +54,13 @@ export async function POST(request: Request) {
   const email = await getAuthEmail();
   if (!email) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-  const body = (await request.json().catch(() => ({}))) as { name?: string; graphJson?: string };
+  const body = (await request.json().catch(() => ({}))) as {
+    name?: string;
+    description?: string;
+    graphJson?: string;
+  };
   const name = body.name?.trim() || "Workflow sem nome";
+  const description = body.description?.trim() ?? "";
   const graphJson = body.graphJson ?? "{}";
 
   const { DB } = getCloudflareBindings();
@@ -53,8 +68,10 @@ export async function POST(request: Request) {
   const id = generateId();
 
   await DB
-    .prepare("INSERT INTO workflows (id, org_id, name, graph_json, created_by) VALUES (?, ?, ?, ?, ?)")
-    .bind(id, orgId, name, graphJson, userId)
+    .prepare(
+      "INSERT INTO workflows (id, org_id, name, description, graph_json, created_by) VALUES (?, ?, ?, ?, ?, ?)"
+    )
+    .bind(id, orgId, name, description, graphJson, userId)
     .run();
 
   return NextResponse.json({ id }, { status: 201 });
