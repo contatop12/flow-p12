@@ -27,10 +27,10 @@ export function BrandIDNode({ id, data, selected }: NodeProps) {
   );
 
   const [toggles, setToggles] = useState({
-    applyPalette: nodeData.brandPayload?.toggles.applyPalette ?? true,
-    applyTypography: nodeData.brandPayload?.toggles.applyTypography ?? true,
-    applyBrandTone: nodeData.brandPayload?.toggles.applyBrandTone ?? true,
-    applyArtRefs: nodeData.brandPayload?.toggles.applyArtRefs ?? false,
+    applyPalette: nodeData.brandPayload?.toggles?.applyPalette ?? true,
+    applyTypography: nodeData.brandPayload?.toggles?.applyTypography ?? true,
+    applyBrandTone: nodeData.brandPayload?.toggles?.applyBrandTone ?? true,
+    applyArtRefs: nodeData.brandPayload?.toggles?.applyArtRefs ?? false,
   });
 
   useEffect(() => {
