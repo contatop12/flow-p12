@@ -27,6 +27,7 @@ const PALETTE_CATEGORIES = [
 export function NodePalette() {
   function onDragStart(e: React.DragEvent, nodeType: string) {
     e.dataTransfer.setData("application/reactflow", nodeType);
+    e.dataTransfer.setData("text/plain", nodeType);
     e.dataTransfer.effectAllowed = "move";
   }
 

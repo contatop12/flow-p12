@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   ReactFlow,
   addEdge,
@@ -49,8 +49,6 @@ export function CanvasClient() {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [workflowId, setWorkflowId] = useState<string | null>(null);
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
-
   const onConnect = useCallback(
     (params: Connection) => {
       const sourceType = getHandleType(params.sourceHandle ?? null);
@@ -73,13 +71,16 @@ export function CanvasClient() {
   const onDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const type = e.dataTransfer.getData("application/reactflow");
-      if (!type || !rfInstance || !reactFlowWrapper.current) return;
+      const type =
+        e.dataTransfer.getData("application/reactflow") ||
+        e.dataTransfer.getData("text/plain");
+      if (!type || !rfInstance) return;
 
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
+      // screenToFlowPosition espera coordenadas de tela (clientX/clientY), não relativas ao wrapper.
+      // Ver: https://reactflow.dev/examples/interaction/drag-and-drop
       const position = rfInstance.screenToFlowPosition({
-        x: e.clientX - bounds.left,
-        y: e.clientY - bounds.top,
+        x: e.clientX,
+        y: e.clientY,
       });
 
       const newNode: Node = {
@@ -157,7 +158,7 @@ export function CanvasClient() {
     <div className="flex flex-col h-full">
       <div className="flex flex-1 min-h-0">
         <NodePalette />
-        <div ref={reactFlowWrapper} className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           <ReactFlow
             nodes={nodes}
             edges={edges}

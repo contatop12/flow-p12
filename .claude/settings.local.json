@@ -56,7 +56,12 @@
       "PowerShell(head *)",
       "PowerShell(New-Item *)",
       "Bash(Get-ChildItem -Path \"C:\\\\IA\\\\P12\\\\01. Automações Ativas\\\\flow-p12\\\\src\\\\components\\\\canvas\" -Recurse)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Write-Output \"Directories created\")",
+      "Bash(git *)",
+      "Bash(Select-Object -First 50)",
+      "Bash(Get-ChildItem *)",
+      "PowerShell(cd \"C:\\\\IA\\\\P12\\\\01. Automações Ativas\\\\flow-p12\"; $GIT_DIR = \\(git rev-parse --git-dir\\); $GIT_COMMON = \\(git rev-parse --git-common-dir\\); Write-Host \"GIT_DIR: $GIT_DIR\"; Write-Host \"GIT_COMMON: $GIT_COMMON\"; Write-Host \"Same: $\\($GIT_DIR -eq $GIT_COMMON\\)\"; git branch --show-current)"
     ]
   }
 }
