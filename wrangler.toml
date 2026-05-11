@@ -18,6 +18,11 @@ bucket_name = "flow-p12-images"
 binding = "KV"
 id = "86ca5e692539459eafd39049e4dd421b"
 
+# Autenticação: defina AUTH_SECRET, AUTH_EMAIL e AUTH_PASSWORD em
+# Workers → Settings → Variables and Secrets (tipo Secret) ou:
+#   npx wrangler secret put AUTH_SECRET
+#   npx wrangler secret put AUTH_EMAIL
+#   npx wrangler secret put AUTH_PASSWORD
 [vars]
 NODE_ENV = "production"
 

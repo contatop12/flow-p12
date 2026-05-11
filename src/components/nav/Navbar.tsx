@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { useCallback, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import {
   LayoutDashboard,
@@ -21,6 +21,25 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { user?: { email?: string } } | null) => {
+        if (!cancelled && data?.user?.email) setEmail(data.user.email);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const signOut = useCallback(async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/sign-in";
+  }, []);
 
   return (
     <nav className="h-14 border-b border-gray-800 bg-gray-900 flex items-center px-4 gap-6 shrink-0">
@@ -51,9 +70,20 @@ export function Navbar() {
         ))}
       </div>
 
-      <UserButton
-        appearance={{ elements: { avatarBox: "w-8 h-8" } }}
-      />
+      <div className="flex items-center gap-3">
+        {email ? (
+          <span className="max-w-[200px] truncate text-xs text-gray-400" title={email}>
+            {email}
+          </span>
+        ) : null}
+        <button
+          type="button"
+          onClick={signOut}
+          className="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs font-medium text-gray-200 hover:bg-gray-700"
+        >
+          Sair
+        </button>
+      </div>
     </nav>
   );
 }

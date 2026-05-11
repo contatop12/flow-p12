@@ -1,4 +1,5 @@
 .open-next/
+.clerk/
 .dev.vars
 .wrangler/
 *.local

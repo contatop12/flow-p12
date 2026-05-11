@@ -1,8 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
-
 export default async function DashboardPage() {
-  const { orgId } = await auth();
-
   return (
     <div className="p-6 max-w-5xl">
       <h1 className="text-2xl font-bold text-white mb-1">Dashboard</h1>
