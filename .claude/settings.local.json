@@ -43,7 +43,13 @@
       "Bash(git push *)",
       "Bash(git reset *)",
       "Bash(git branch *)",
-      "Bash(gh pr create --base main --head feat/plan1-foundation --title 'feat: Plan 1 — Foundation \\(Next.js + Cloudflare + Auth + DB Schema\\)' --body ' *)"
+      "Bash(gh pr create --base main --head feat/plan1-foundation --title 'feat: Plan 1 — Foundation \\(Next.js + Cloudflare + Auth + DB Schema\\)' --body ' *)",
+      "Bash(Remove-Item \"C:\\\\IA\\\\P12\\\\01. Automações Ativas\\\\flow-p12\\\\wrangler.toml\" -Force)",
+      "Bash(Remove-Item \"C:\\\\IA\\\\P12\\\\01. Automações Ativas\\\\flow-p12\\\\scripts\\\\postinstall-workers-build.cjs\" -Force)",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__set_active_account",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__kv_namespaces_list",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__kv_namespace_create"
     ]
   }
 }
