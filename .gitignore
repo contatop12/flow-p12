@@ -1,0 +1,6 @@
+.open-next/
+.dev.vars
+.wrangler/
+*.local
+node_modules/
+.next/
