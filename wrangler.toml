@@ -1,6 +1,7 @@
-# Workers Builds (Git): o comando de deploy tem de incluir o build OpenNext.
-# No painel: Deploy = "npm run deploy" (recomendado), ou Build = "npm run cf:build" + Deploy = "npx wrangler deploy".
-# Ver: https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/
+# Workers Builds (Git): por defeito o deploy é só `npx wrangler deploy`.
+# Opções: (1) no painel, Deploy = "npm run deploy" ou Build = "npm run cf:build";
+# (2) este repo corre `opennextjs-cloudflare build` no postinstall quando WORKERS_CI=1.
+# https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/
 name = "flow-p12"
 main = ".open-next/worker.js"
 compatibility_date = "2025-01-01"
